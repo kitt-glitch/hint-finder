@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>221B Baker Street - ตามหาคำใบ้พี่รหัส SAN</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Prompt:wght@300;400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      line-height: 1.6;
+      background-color: #0d0b0a;
+      color: #e5e7eb;
+      background-image: radial-gradient(circle at 50% 15%, rgba(180, 136, 61, 0.12) 0%, transparent 60%);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .font-sherlock-en { font-family: 'Cinzel', serif; letter-spacing: 0.05em; }
+    .font-typewriter { font-family: 'Special Elite', 'Prompt', monospace; }
+
+    .sherlock-card {
+      background: linear-gradient(145deg, #181513 0%, #100e0d 100%);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(212, 175, 55, 0.03);
+    }
+
+    .parchment-bg {
+      background-color: #f4eae0;
+      color: #2a1f1a;
+      background-image: radial-gradient(#dfcfbe 1px, transparent 0);
+      background-size: 12px 12px;
+    }
+
+    .gold-glow { box-shadow: 0 0 25px rgba(212, 175, 55, 0.2); }
+    .gold-text { color: #d4af37; }
+    .progress-bar-fill { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    .hint-unlocked {
+      transform: scale(1);
+      border-color: rgba(212, 175, 55, 0.6);
+      background: linear-gradient(145deg, #241c14 0%, #17120d 100%);
+    }
+
+    .hint-locked {
+      transform: scale(0.97);
+      opacity: 0.8;
+      border-color: rgba(120, 113, 108, 0.3);
+      background: rgba(20, 18, 16, 0.8);
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen px-4 py-8 md:py-12">
+
+  <div class="max-w-3xl w-full mx-auto my-auto">
+
+    <header class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-950/40 border-2 border-amber-500/50 mb-4 shadow-xl">
+        <i data-lucide="search" class="w-10 h-10 text-amber-400"></i>
+      </div>
+      <p class="font-sherlock-en tracking-widest text-xs uppercase text-amber-500/80 mb-1">221B Baker Street</p>
+      <h1 class="text-3xl md:text-5xl font-bold text-amber-100 mb-3 drop-shadow-md">แฟ้มคดีตามหาคำใบ้พี่รหัส</h1>
+    </header>
+
+    <div id="searchSection" class="sherlock-card rounded-2xl p-6 md:p-8 mb-8">
+      <form id="searchForm" onsubmit="handleSearch(event)">
+        <label class="block text-sm text-amber-200/90 mb-2">กรอกรหัสนักศึกษาของคุณ (เช่น 6908029 หรือ 029)</label>
+        <div class="flex flex-col md:flex-row gap-3">
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <i data-lucide="file-key-2" class="w-5 h-5 text-amber-500/60"></i>
+            </div>
+            <input type="text" id="studentIdInput" required placeholder="กรอกรหัสที่นี่..." class="w-full pl-12 pr-4 py-3.5 bg-stone-900/90 border border-amber-700/50 rounded-xl text-amber-100 placeholder-stone-500 focus:ring-2 focus:ring-amber-400/30 text-lg">
+          </div>
+          <button type="submit" id="searchBtn" class="px-8 py-3.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-stone-950 font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all">
+            <i data-lucide="search" class="w-5 h-5"></i><span>ค้นหาเบาะแส</span>
+          </button>
+        </div>
+      </form>
+      <div id="errorAlert" class="hidden mt-4 p-4 rounded-xl bg-red-950/60 border border-red-500/40 text-red-200 text-sm flex gap-3"><i data-lucide="alert-triangle" class="w-5 h-5"></i><span id="errorMessage"></span></div>
+    </div>
+
+    <div id="loadingState" class="hidden text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent mb-4"></div>
+      <p class="text-amber-200/80 font-sherlock-en">กำลังสืบสวนคดี...</p>
+    </div>
+
+    <div id="resultSection" class="hidden space-y-6">
+      <button onclick="resetSearch()" class="inline-flex items-center gap-2 text-xs text-amber-400/70 hover:text-amber-300 mb-2">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> ค้นหารหัสอื่น
+      </button>
+
+      <div class="sherlock-card rounded-2xl p-6 md:p-8 text-center relative gold-glow">
+        <span class="text-xs text-amber-400/80 block mb-2 font-sherlock-en tracking-widest uppercase">
+          🕵️‍♂️ ข้อมูลนักศึกษาผู้สืบค้น (น้องรหัส)
+        </span>
+        <h2 id="studentNickname" class="text-4xl md:text-5xl font-bold gold-text my-2 drop-shadow-md">--</h2>
+        <div class="mt-3 pt-3 border-t border-amber-800/30 text-sm text-amber-200/90 flex items-center justify-center gap-2 flex-wrap">
+          <i data-lucide="user" class="w-4 h-4 text-amber-400"></i>
+          <span id="studentFullName"></span>
+          <span id="studentIdTag" class="text-xs text-stone-400"></span>
+        </div>
+      </div>
+
+      <div class="sherlock-card rounded-xl p-5 border-l-4 border-amber-500 mt-2">
+        <div class="flex justify-between items-end mb-2">
+          <div>
+            <div class="text-xs text-stone-400 font-sherlock-en">CASE #<span id="caseLast3">--</span></div>
+            <div id="caseStatusText" class="text-sm md:text-base font-medium text-amber-300 mt-1 flex items-center gap-2">
+              <i data-lucide="fingerprint" class="w-4 h-4"></i> สถานะ: กำลังสืบสวน
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-stone-400">พบเบาะแส</span>
+            <div class="text-lg font-bold text-amber-400 leading-none"><span id="hintsFoundCount">0</span>/3</div>
+          </div>
+        </div>
+        <div class="w-full bg-stone-900 rounded-full h-2 mt-3 border border-stone-800 overflow-hidden">
+          <div id="progressBar" class="bg-gradient-to-r from-amber-600 to-amber-400 h-2 rounded-full progress-bar-fill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div id="specialCaseNotice" class="hidden sherlock-card rounded-xl p-5 border border-red-900/50 bg-red-950/10 mt-2">
+        <div class="flex items-start gap-3">
+          <i data-lucide="siren" class="w-6 h-6 text-red-400 shrink-0 mt-1"></i>
+          <div>
+            <h4 class="text-red-300 font-bold mb-1">คดีพิเศษ (Special Case)</h4>
+            <p class="text-sm text-red-200/80">
+              บุคคลเจ้าของรหัสนี้ได้ทิ้งร่องรอยเบาะแสบางอย่างเอาไว้... และหายตัวไปอย่างไร้ร่องรอย
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="hintsSection" class="space-y-4 pt-4">
+        <h3 class="text-lg font-medium text-amber-200 flex items-center gap-2 mb-3">
+          <i data-lucide="compass" class="w-5 h-5 text-amber-400"></i> เบาะแสที่รวบรวมได้
+        </h3>
+        <div id="hintsContainer" class="space-y-4"></div>
+        <div id="mentorRevealContainer" class="mt-6 pt-2"></div>
+      </div>
+    </div>
+
+    <footer class="mt-12 text-center text-xs text-amber-500/30 font-sherlock-en tracking-widest">
+      SAN DEPARTMENT • 221B BAKER STREET HINT FINDER
+    </footer>
+
+  </div>
+
+  <script>
+    // 🔴🔴🔴 สำคัญมาก! เอา URL ที่ก๊อปปี้มาจาก Apps Script (ส่วนที่ 1) มาวางแทนลิงก์นี้ 🔴🔴🔴
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzY5TDg0AQ5D6NBtFAxFN8cVOKC1eZ_CG12Orb8suDUEhwXy0iRypDZ0Gs43AtKtVNi4A/exec'; 
+
+    let countdownInterval = null;
+    lucide.createIcons();
+
+    function handleSearch(e) {
+      e.preventDefault();
+      const studentId = document.getElementById('studentIdInput').value.trim();
+      if (!studentId) return;
+
+      showLoading(true);
+      hideError();
+
+      fetch(API_URL + '?id=' + studentId)
+        .then(response => {
+          if (!response.ok) { throw new Error('Network response was not ok'); }
+          return response.json();
+        })
+        .then(data => { onSearchResult(data); })
+        .catch(error => { onSearchError(error); });
+    }
+
+    function onSearchResult(res) {
+      showLoading(false);
+      if (!res.success) return showError(res.message);
+
+      document.getElementById('caseLast3').textContent = res.student.last3;
+      document.getElementById('studentNickname').textContent = res.student.nickname;
+      document.getElementById('studentFullName').textContent = `${res.student.prefix}${res.student.firstName} ${res.student.lastName}`;
+      document.getElementById('studentIdTag').textContent = `(${res.student.studentId})`;
+
+      const foundCount = res.progress.unlockedCount;
+      document.getElementById('hintsFoundCount').textContent = foundCount;
+      setTimeout(() => { document.getElementById('progressBar').style.width = `${(foundCount / 3) * 100}%`; }, 100);
+
+      const statusTextEl = document.getElementById('caseStatusText');
+      const specialNoticeEl = document.getElementById('specialCaseNotice');
+      
+      if (res.mentor.isRevealed) {
+        if (res.mentor.isLeft) {
+          statusTextEl.innerHTML = `<i data-lucide="file-x" class="w-4 h-4 text-stone-400"></i> <span class="text-stone-300">สถานะ: ปิดแฟ้มคดี (Case Closed)</span>`;
+          specialNoticeEl.classList.add('hidden'); 
+        } else {
+          statusTextEl.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> <span class="text-emerald-400">สถานะ: ไขคดีสำเร็จ</span>`;
+          specialNoticeEl.classList.add('hidden');
+        }
+      } else {
+        statusTextEl.innerHTML = `<i data-lucide="fingerprint" class="w-4 h-4"></i> สถานะ: กำลังสืบสวน`;
+        if (res.mentor.isLeft) {
+          specialNoticeEl.classList.remove('hidden'); 
+        } else {
+          specialNoticeEl.classList.add('hidden');
+        }
+      }
+
+      renderHints(res.hints);
+      renderMentorReveal(res.mentor);
+
+      document.getElementById('searchSection').classList.add('hidden');
+      document.getElementById('resultSection').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function renderHints(hints) {
+      const container = document.getElementById('hintsContainer');
+      container.innerHTML = '';
+      hints.forEach(hint => {
+        const card = document.createElement('div');
+        if (hint.unlocked) {
+          card.className = 'sherlock-card rounded-xl p-5 border transition-all hint-unlocked';
+          card.innerHTML = `
+            <div class="flex items-center justify-between mb-3 border-b border-amber-900/40 pb-2">
+              <span class="text-sm font-medium text-emerald-400 flex items-center gap-1.5">
+                <i data-lucide="unlock" class="w-4 h-4 text-emerald-400"></i> เบาะแสที่ ${hint.number} (เปิดเผยแล้ว)
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 font-mono">UNLOCKED</span>
+            </div>
+            <div class="parchment-bg p-5 rounded-lg font-typewriter text-sm md:text-base font-semibold leading-relaxed shadow-inner">
+              "${escapeHtml(hint.text)}"
+            </div>
+          `;
+        } else {
+          card.className = 'rounded-xl p-4 border transition-all hint-locked';
+          card.innerHTML = `
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-stone-400 flex items-center gap-1.5">
+                <i data-lucide="lock" class="w-3.5 h-3.5 text-stone-500"></i> เบาะแสที่ ${hint.number}
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-stone-900 text-stone-500 border border-stone-800">LOCKED</span>
+            </div>
+            <div class="text-center py-4">
+              <i data-lucide="clock" class="w-8 h-8 text-amber-500/40 mx-auto mb-2"></i>
+              <p class="text-xs text-amber-200/70 font-medium">คำใบ้นี้ยังไม่ถูกเปิดเผย</p>
+              <p class="text-xs text-stone-400/80 mt-1">กำหนดปลดล็อก: ${hint.unlockDateStr}</p>
+            </div>
+          `;
+        }
+        container.appendChild(card);
+      });
+    }
+
+    function renderMentorReveal(mentor) {
+      const container = document.getElementById('mentorRevealContainer');
+      container.innerHTML = '';
+      if (countdownInterval) clearInterval(countdownInterval);
+      if (!mentor) return;
+
+      let coMentorHtml = '';
+      if (mentor.coMentors && mentor.coMentors.length > 0) {
+        coMentorHtml = `
+          <div class="mt-6 pt-5 border-t border-emerald-900/30 text-left">
+            <span class="text-xs text-emerald-400/80 block mb-3 font-semibold">
+              <i data-lucide="users" class="w-4 h-4 inline mr-1 -mt-0.5"></i> สายโครหัส
+            </span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-center">
+              ${mentor.coMentors.map(co => {
+                if (co.isLeft) {
+                  return `
+                    <div class="p-3.5 bg-stone-900/40 rounded-xl border border-stone-800 flex flex-col items-center justify-center transition-colors">
+                      <span class="text-stone-400 font-bold text-sm mb-1">รหัส: ${escapeHtml(co.studentId)}</span>
+                      <span class="text-[10px] text-stone-500 italic">บุคคลนี้ได้หายตัวไปอย่างไร้ร่องรอย...</span>
+                    </div>
+                  `;
+                } else {
+                  return `
+                    <div class="p-3.5 bg-stone-900/60 rounded-xl border border-stone-800 flex flex-col items-center justify-center hover:border-emerald-900/50 transition-colors">
+                      <span class="text-amber-300 font-bold text-lg mb-1">พี่${escapeHtml(co.nickname)}</span>
+                      <span class="text-[11px] text-stone-300">${escapeHtml(co.prefix)}${escapeHtml(co.firstName)} ${escapeHtml(co.lastName)}</span>
+                      ${co.ig && co.ig !== '-' ? `<span class="text-[10px] text-amber-400/80 mt-1.5 flex items-center gap-1"><i data-lucide="instagram" class="w-3 h-3"></i> ${escapeHtml(co.ig)}</span>` : ''}
+                    </div>
+                  `;
+                }
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      if (mentor.isRevealed) {
+        if (mentor.isLeft) {
+          container.innerHTML = `
+            <div class="sherlock-card rounded-2xl p-6 border-2 border-stone-700 bg-stone-900/50 text-center">
+              <div class="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center mx-auto mb-3">
+                <i data-lucide="folder-x" class="w-6 h-6 text-stone-400"></i>
+              </div>
+              <h3 class="text-lg font-bold text-stone-300 mb-1 font-sherlock-en">CASE CLOSED</h3>
+              <p class="text-sm text-stone-400 mb-3">รหัสสายรหัส: <span class="text-amber-200">${escapeHtml(mentor.studentId)}</span></p>
+              <div class="p-4 bg-stone-950/80 rounded-lg border border-stone-800 text-left">
+                <p class="text-sm text-stone-300/90 leading-relaxed font-medium">
+                  "บุคคลเจ้าของรหัสนี้ได้เดินทางสู่เส้นทางใหม่แล้ว... แต่ความห่วงใยยังคงอยู่ โดยได้ฝากฝังหน้าที่ให้สายโครหัสดูแลน้องต่อไปเป็นที่เรียบร้อย"
+                </p>
+              </div>
+              ${coMentorHtml}
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="sherlock-card rounded-2xl p-6 md:p-8 border-2 border-emerald-500/50 gold-glow">
+              <div class="flex items-center gap-2 mb-4 text-emerald-400 text-sm">
+                <i data-lucide="sparkles" class="w-5 h-5"></i><span class="font-semibold">เฉลยพี่รหัส (เปิดเผยแล้ว!)</span>
+              </div>
+              <div class="text-center my-4 p-6 bg-stone-900/80 rounded-xl border border-amber-500/20">
+                <span class="text-xs text-stone-400 block mb-1">พี่รหัสของคุณคือ</span>
+                <h2 class="text-4xl md:text-5xl font-bold text-amber-300 my-2">พี่${escapeHtml(mentor.nickname)}</h2>
+                <p class="text-sm text-amber-100/90 mt-2 font-medium">${escapeHtml(mentor.prefix)}${escapeHtml(mentor.firstName)} ${escapeHtml(mentor.lastName)}</p>
+                <p class="text-xs text-stone-400 mt-1">รหัส: ${escapeHtml(mentor.studentId)}</p>
+                ${mentor.ig && mentor.ig !== '-' ? `
+                  <div class="mt-4 pt-4 border-t border-stone-800/60 w-full flex items-center justify-center">
+                    <div class="flex items-center gap-1.5 text-xs text-amber-400">
+                      <i data-lucide="instagram" class="w-4 h-4"></i><span>IG: @${escapeHtml(mentor.ig)}</span>
+                    </div>
+                  </div>
+                ` : ''}
+              </div>
+              ${coMentorHtml}
+            </div>
+          `;
+        }
+      } else {
+        container.innerHTML = `
+          <div class="sherlock-card rounded-2xl p-6 border border-amber-800/40 text-center">
+            <i data-lucide="shield-question" class="w-8 h-8 text-amber-500/50 mx-auto mb-2"></i>
+            <h4 class="text-sm font-medium text-amber-200 mb-3">เฉลยข้อมูลพี่รหัส (ยังไม่ถึงเวลาเปิดเผย)</h4>
+            <div id="countdownBox" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-stone-900 border border-amber-900/50 text-amber-400 text-xs font-mono mb-2">
+              <span id="timerDisplay">กำลังคำนวณ...</span>
+            </div>
+            <p class="text-[10px] text-stone-500 block">กำหนดเฉลย: ${mentor.revealDateStr}</p>
+          </div>
+        `;
+        if (mentor.revealTimestamp) startCountdown(mentor.revealTimestamp);
+      }
+      lucide.createIcons();
+    }
+
+    function startCountdown(target) {
+      function update() {
+        const diff = target - new Date().getTime();
+        if (diff <= 0) {
+          document.getElementById('timerDisplay').textContent = 'ถึงเวลาเฉลยแล้ว! กรุณารีเฟรช';
+          if (countdownInterval) clearInterval(countdownInterval);
+          return;
+        }
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        const el = document.getElementById('timerDisplay');
+        if (el) el.textContent = `⏳ อีก ${d}วัน ${h}ชม ${m}นาที ${s}วิ`;
+      }
+      update();
+      countdownInterval = setInterval(update, 1000);
+    }
+
+    function showLoading(b) {
+      document.getElementById('loadingState').classList.toggle('hidden', !b);
+      document.getElementById('searchBtn').disabled = b;
+    }
+    function showError(m) {
+      document.getElementById('errorMessage').textContent = m;
+      document.getElementById('errorAlert').classList.remove('hidden');
+    }
+    function hideError() { document.getElementById('errorAlert').classList.add('hidden'); }
+    function resetSearch() {
+      if (countdownInterval) clearInterval(countdownInterval);
+      document.getElementById('resultSection').classList.add('hidden');
+      document.getElementById('searchSection').classList.remove('hidden');
+      document.getElementById('studentIdInput').value = '';
+      hideError();
+    }
+    function onSearchError(e) {
+      showLoading(false);
+      showError('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + e.message);
+    }
+    function escapeHtml(t) {
+      if (!t) return '';
+      const d = document.createElement('div'); d.textContent = t; return d.innerHTML;
+    }
+  </script>
+</body>
+</html>

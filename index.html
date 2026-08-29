@@ -65,12 +65,12 @@
         <i data-lucide="search" class="w-10 h-10 text-amber-400"></i>
       </div>
       <p class="font-sherlock-en tracking-widest text-xs uppercase text-amber-500/80 mb-1">999 SALAYA INVESTIGATION</p>
-      <h1 class="text-3xl md:text-5xl font-bold text-amber-100 mb-3 drop-shadow-md">แฟ้มคดีตามหาคำใบ้พี่รหัส</h1>
+      <h1 class="text-3xl md:text-5xl font-bold text-amber-100 mb-3 drop-shadow-md">แฟ้มคดีคำใบ้ตามหาพี่รหัส</h1>
     </header>
 
     <div id="searchSection" class="sherlock-card rounded-2xl p-6 md:p-8 mb-8">
       <form id="searchForm" onsubmit="handleSearch(event)">
-        <label class="block text-sm text-amber-200/90 mb-2">กรอกรหัสนักศึกษาของคุณ (เช่น 6908029 หรือ 029)</label>
+        <label class="block text-sm text-amber-200/90 mb-2">กรอกรหัสนักศึกษาของคุณ (เช่น 6908029)</label>
         <div class="flex flex-col md:flex-row gap-3">
           <div class="relative flex-1">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -88,7 +88,7 @@
 
     <div id="loadingState" class="hidden text-center py-12">
       <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent mb-4"></div>
-      <p class="text-amber-200/80 font-sherlock-en">กำลังสืบสวนคดี...</p>
+      <p class="text-amber-200/80 font-sherlock-en">🔎กำลังสืบสวนคดี...</p>
     </div>
 
     <div id="resultSection" class="hidden space-y-6">
@@ -97,7 +97,7 @@
       </button>
 
       <div class="sherlock-card rounded-2xl p-6 md:p-8 text-center relative gold-glow">
-        <span class="text-xs text-amber-400/80 block mb-2 font-sherlock-en tracking-widest uppercase">
+        <span class="text-xs text-amber-400/80 block mb-2 font-semibold tracking-widest">
           🕵️‍♂️ ข้อมูลนักศึกษาผู้สืบค้น (น้องรหัส)
         </span>
         <h2 id="studentNickname" class="text-4xl md:text-5xl font-bold gold-text my-2 drop-shadow-md">--</h2>
@@ -273,7 +273,7 @@
         coMentorHtml = `
           <div class="mt-6 pt-5 border-t border-emerald-900/30 text-left">
             <span class="text-xs text-emerald-400/80 block mb-3 font-semibold">
-              <i data-lucide="users" class="w-4 h-4 inline mr-1 -mt-0.5"></i> สายโครหัส
+              <i data-lucide="users" class="w-4 h-4 inline mr-1 -mt-0.5"></i> สายโครหัส (co-mentors)
             </span>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-center">
               ${mentor.coMentors.map(co => {
@@ -291,9 +291,9 @@
                       <span class="text-[11px] text-stone-300">${escapeHtml(co.firstName)} ${escapeHtml(co.lastName)}</span>
                       <span class="text-[9px] text-stone-400/70 mb-1">สาขา: ${escapeHtml(co.branch)}</span>
                       ${co.ig && co.ig !== '-' ? `
-                        <div class="inline-flex items-center gap-1.5 text-[11px] text-amber-400/90 mt-1">
-                          <i data-lucide="instagram" class="w-3 h-3"></i><span>${escapeHtml(co.ig)}</span>
-                        </div>
+                      <div class="mt-1.5 flex w-full items-center justify-center gap-1.5 text-[11px] text-amber-400/90">
+                      <i data-lucide="instagram" class="w-3 h-3"></i><span>${escapeHtml(String(co.ig).trim())}</span>
+                      </div>
                       ` : ''}
                     </div>
                   `;
@@ -335,11 +335,9 @@
                 <p class="text-xs text-stone-400 mt-2">รหัส: ${escapeHtml(mentor.studentId)}</p>
                 
                 ${mentor.ig && mentor.ig !== '-' ? `
-                  <div class="mt-4 pt-3 border-t border-stone-800/60 w-full text-center">
-                    <div class="inline-flex items-center gap-1.5 text-xs text-amber-400 tracking-wide">
-                      <i data-lucide="instagram" class="w-4 h-4"></i><span>${escapeHtml(mentor.ig)}</span>
-                    </div>
-                  </div>
+                <div class="mt-4 pt-3 border-t border-stone-800/60 w-full flex items-center justify-center gap-1.5 text-xs text-amber-400 tracking-wide">
+                <i data-lucide="instagram" class="w-4 h-4"></i><span>${escapeHtml(String(mentor.ig).trim())}</span>
+                </div>
                 ` : ''}
               </div>
               ${coMentorHtml}

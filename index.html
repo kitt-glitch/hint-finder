@@ -303,8 +303,8 @@
                     <div class="p-3.5 bg-stone-900/60 rounded-xl border border-stone-800 flex flex-col items-center justify-center hover:border-emerald-900/50 transition-colors">
                       <span class="text-amber-300 font-bold text-lg mb-0.5">พี่${escapeHtml(co.nickname)}</span>
                       <span class="text-[11px] text-stone-300">${escapeHtml(co.firstName)} ${escapeHtml(co.lastName)}</span>
-                      <span class="text-[9px] text-stone-400/70">สาขา: ${escapeHtml(co.branch)}</span>
-                      <span class="text-[10px] text-stone-400 mb-1">รหัส: ${escapeHtml(co.studentId)}</span>
+                      <span class="text-[9px] text-stone-400">สาขา: ${escapeHtml(co.branch)}</span>
+                      <span class="text-[9px] text-stone-400/70 mb-1">รหัส: ${escapeHtml(co.studentId)}</span>
                       ${co.ig && co.ig !== '-' ? `
                         <div class="mt-1 w-full flex justify-center">
                           <div class="grid grid-cols-[16px_auto_16px] gap-1.5 items-center text-[11px] text-amber-400/90">
@@ -350,7 +350,7 @@
                 <span class="text-xs text-stone-400 block mb-1">พี่รหัสของคุณคือ</span>
                 <h2 class="text-4xl md:text-5xl font-bold text-amber-300 my-2">พี่${escapeHtml(mentor.nickname)}</h2>
                 <p class="text-sm text-amber-100/90 mt-2 font-medium">${escapeHtml(mentor.firstName)} ${escapeHtml(mentor.lastName)}</p>
-                <p class="text-xs text-amber-500/80 mt-0.5">สาขา: ${escapeHtml(mentor.branch)}</p>
+                <p class="text-xs text-amber-500/80 mt-1">สาขา: ${escapeHtml(mentor.branch)}</p>
                 <p class="text-xs text-stone-400 mt-2">รหัส: ${escapeHtml(mentor.studentId)}</p>
                 
                 ${mentor.ig && mentor.ig !== '-' ? `

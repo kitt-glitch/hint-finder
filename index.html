@@ -189,9 +189,8 @@
       document.getElementById('caseLast3').textContent = res.student.last3;
       document.getElementById('studentNickname').textContent = res.student.nickname;
       document.getElementById('studentFullName').textContent = `${res.student.firstName} ${res.student.lastName}`; // ถอดคำนำหน้าออก
-      document.getElementById('studentBranchTag').textContent = `สาขา: ${res.student.branch}`; // แสดงสาขาแทน
+      document.getElementById('studentBranchTag').textContent = `สาขา: ${res.student.branch}`;
       document.getElementById('studentIdTag').textContent = `(${res.student.studentId})`;
-
       const igTag = document.getElementById('studentIgTag');
       if (res.student.ig && res.student.ig !== '-') {
         igTag.innerHTML = `

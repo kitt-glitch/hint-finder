@@ -304,6 +304,7 @@
                       <span class="text-amber-300 font-bold text-lg mb-0.5">พี่${escapeHtml(co.nickname)}</span>
                       <span class="text-[11px] text-stone-300">${escapeHtml(co.firstName)} ${escapeHtml(co.lastName)}</span>
                       <span class="text-[9px] text-stone-400/70 mb-1">สาขา: ${escapeHtml(co.branch)}</span>
+                      <p class="text-xs text-stone-400 mt-2">รหัส: ${escapeHtml(co.studentId)}</p>
                       ${co.ig && co.ig !== '-' ? `
                         <div class="mt-1 w-full flex justify-center">
                           <div class="grid grid-cols-[16px_auto_16px] gap-1.5 items-center text-[11px] text-amber-400/90">

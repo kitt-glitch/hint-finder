@@ -136,7 +136,7 @@
           <div>
             <h4 class="text-red-300 font-bold mb-1">คดีพิเศษ (Special Case)</h4>
             <p class="text-sm text-red-200/80">
-              บุคคลเจ้าของรหัสนี้ได้ทิ้งร่องรอยเบาะแสบางอย่างเอาไว้... และหายตัวไปอย่างลึกลับ
+              บุคคลที่เป็นเจ้าของรหัสนี้ไม่ได้อยู่ในมหาวิทยาลัยอีกต่อไป แต่เขายังคงทิ้งร่องรอยไว้ในแฟ้มคดีนี้ การสืยสวนยังคงดำเนินต่อไป...
             </p>
           </div>
         </div>
@@ -294,7 +294,7 @@
                         <div class="mt-1 w-full flex justify-center">
                           <div class="grid grid-cols-[16px_auto_16px] gap-1.5 items-center text-[11px] text-amber-400/90">
                             <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="justify-self-end"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-                            <span class="text-center">${escapeHtml(String(co.ig).trim())}</span>
+                            <span class="text-center">IG:${escapeHtml(String(co.ig).trim())}</span>
                             <div></div> <!-- กล่องเปล่าเพื่อรักษาสมดุล Grid -->
                           </div>
                         </div>
@@ -319,7 +319,7 @@
               <p class="text-sm text-stone-400 mb-3">รหัสสายรหัส: <span class="text-amber-200">${escapeHtml(mentor.studentId)}</span></p>
               <div class="p-4 bg-stone-950/80 rounded-lg border border-stone-800 text-left">
                 <p class="text-sm text-stone-300/90 leading-relaxed font-medium">
-                  "บุคคลเจ้าของรหัสนี้ได้เดินทางสู่เส้นทางใหม่แล้ว... แต่ความห่วงใยยังคงอยู่ โดยได้ฝากฝังหน้าที่ให้สายโคดูแลน้องต่อไปเป็นที่เรียบร้อย"
+                  "ถึงแม้คดีนี้จะได้รับการคลี่คลาย แต่ดูเหมือนว่าเจ้าของรหัสนี้จะไม่ได้อยู่ในมหาวิทยาลัยอีกต่อไป แต่เขาก็ได้ฝากฝังให้สายโคดูแลน้องต่อเป็นที่เรียบร้อย"
                 </p>
               </div>
               ${coMentorHtml}
@@ -342,7 +342,7 @@
                   <div class="mt-4 pt-3 border-t border-stone-800/60 w-full flex justify-center">
                     <div class="grid grid-cols-[20px_auto_20px] gap-1.5 items-center text-xs text-amber-400 tracking-wide">
                       <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="justify-self-end"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-                      <span class="text-center">${escapeHtml(String(mentor.ig).trim())}</span>
+                      <span class="text-center">IG:${escapeHtml(String(mentor.ig).trim())}</span>
                       <div></div> <!-- กล่องเปล่าเพื่อรักษาสมดุล Grid -->
                     </div>
                   </div>
@@ -381,7 +381,7 @@
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((diff % (1000 * 60)) / 1000);
         const el = document.getElementById('timerDisplay');
-        if (el) el.textContent = `⏳ อีก ${d}วัน ${h}ชม ${m}นาที ${s}วิ`;
+        if (el) el.textContent = `⏳ อีก ${d} วัน ${h} ชม ${m} นาที ${s} วิ`;
       }
       update();
       countdownInterval = setInterval(update, 1000);

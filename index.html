@@ -290,7 +290,7 @@
               <i data-lucide="users" class="w-4 h-4 inline mr-1 -mt-0.5"></i> สายโครหัส (co-mentors)
             </span>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-center">
-              ${mentor.coMentors.map(co => {
+              ${mentor.coMentors.filter(co => co.nickname && co.nickname != 'ไม่ระบุ' && co.studentId !== '').map(co => {
                 if (co.isLeft) {
                   return `
                     <div class="p-3.5 bg-stone-900/40 rounded-xl border border-stone-800 flex flex-col items-center justify-center transition-colors">

@@ -197,7 +197,7 @@
         igTag.innerHTML = `
           <div class="grid grid-cols-[16px_auto_16px] gap-1.5 items-center text-sm text-amber-400/90 tracking-wide">
             <div></div>
-            <span class="text-center">${escapeHtml(String(res.student.ig).trim())}</span>
+            <a href="http://www.instragram.com/${escapeHtml(String(res.student.ig).trim().replace('@', ''))}" target="blank" class="text-center hover:text-amber-200 hover:underline transition-colors z-10">${escapeHtml(String(res.student.ig).trim())}</a>
             <div></div>
           </div>
         `;
@@ -309,7 +309,7 @@
                         <div class="mt-1 w-full flex justify-center">
                           <div class="grid grid-cols-[16px_auto_16px] gap-1.5 items-center text-[11px] text-amber-400/90">
                             <div></div>
-                            <span class="text-center">IG:${escapeHtml(String(co.ig).trim())}</span>
+                            <a href="https://www.instagram.com/${escapeHtml(String(co.ig).trim().replace('@', ''))}" target="_blank" class="text-center hover:text-amber-200 hover:underline transition-colors z-10">IG:${escapeHtml(String(co.ig).trim())}</a>
                             <div></div> <!-- กล่องเปล่าเพื่อรักษาสมดุล Grid -->
                           </div>
                         </div>
@@ -357,7 +357,7 @@
                   <div class="mt-4 pt-3 border-t border-stone-800/60 w-full flex justify-center">
                     <div class="grid grid-cols-[20px_auto_20px] gap-1.5 items-center text-sm text-amber-400 tracking-wide">
                       <div></div>
-                      <span class="text-center">IG:${escapeHtml(String(mentor.ig).trim())}</span>
+                      <a href="https://www.instagram.com/${escapeHtml(String(mentor.ig).trim().replace('@', ''))}" target="_blank" class="text-center hover:text-amber-200 hover:underline transition-colors z-10">IG:${escapeHtml(String(mentor.ig).trim())}</a>
                       <div></div> <!-- กล่องเปล่าเพื่อรักษาสมดุล Grid -->
                     </div>
                   </div>

@@ -426,6 +426,25 @@
       if (!t) return '';
       const d = document.createElement('div'); d.textContent = t; return d.innerHTML;
     }
+    
+    function generateContactLink(contactStr) {
+      if (!contactStr || contactStr === '-') return '';
+      let str = String(contactStr).trim();
+      let lowerStr = str.toLowerCase();
+      
+      // ดักจับว่ามีคำว่า line หรือไม่
+      if (lowerStr.includes('line')) {
+        // ลบคำว่า line, id และเครื่องหมายต่างๆ ออก ให้เหลือแค่ไอดีจริงๆ
+        let cleanId = str.replace(/line\s*id\s*[:\-]?\s*/i, '').replace(/line\s*[:\-]?\s*/i, '').trim();
+        // เปลี่ยนจากแท็ก <a> เป็น <span> ธรรมดา เพื่อไม่ให้กดเป็นลิงก์ได้
+        return `<span class="text-center text-emerald-400 font-medium z-10">LINE: ${escapeHtml(cleanId)}</span>`;
+      } else {
+        // ถ้าไม่มีคำว่า line ให้ถือว่าเป็น IG และทำเป็นลิงก์กดได้เหมือนเดิม
+        let cleanId = str.replace(/ig\s*[:\-]?\s*/i, '').replace('@', '').trim();
+        let url = 'https://www.instagram.com/' + cleanId;
+        return `<a href="${url}" target="_blank" class="text-center hover:text-amber-200 hover:underline transition-colors z-10 font-medium">IG: ${escapeHtml(cleanId)}</a>`;
+      }
+    }
   </script>
 </body>
 </html>

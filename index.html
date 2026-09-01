@@ -222,7 +222,7 @@
       document.getElementById('hintsFoundCount').textContent = foundCount;
       setTimeout(() => { document.getElementById('progressBar').style.width = `${(foundCount / 3) * 100}%`; }, 100);
 
-            const statusTextEl = document.getElementById('caseStatusText');
+      const statusTextEl = document.getElementById('caseStatusText');
       const specialNoticeEl = document.getElementById('specialCaseNotice');
       const specialCareNoticeEl = document.getElementById('specialCareNotice');
       
@@ -320,29 +320,35 @@
                     </div>
                   `;
                 } else {
+                  // กำหนดสไตล์การ์ด: ถ้าเป็นผู้ดูแลหลักให้เรืองแสงสีทอง ถ้าไม่ใช่ให้เป็นสีเทาปกติ
+                  const boxStyle = co.isPrimaryCaregiver 
+                    ? 'bg-stone-800/90 border-amber-500/60 shadow-[0_0_15px_rgba(245,158,11,0.15)]' 
+                    : 'bg-stone-900/60 border-stone-800 hover:border-emerald-900/50';
+                  
+                  // สร้างป้ายกำกับ "ผู้ดูแลหลัก" แปะไว้มุมขวาบน
+                  const badgeHtml = co.isPrimaryCaregiver
+                    ? `<div class="absolute -top-2.5 -right-2 bg-gradient-to-r from-amber-600 to-amber-500 text-stone-950 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md border border-amber-300 flex items-center gap-1 z-20"><i data-lucide="star" class="w-3 h-3 fill-stone-950"></i> ผู้ดูแลหลัก</div>`
+                    : '';
+
                   return `
-                    <div class="p-3.5 bg-stone-900/60 rounded-xl border border-stone-800 flex flex-col items-center justify-center hover:border-emerald-900/50 transition-colors">
+                    <div class="relative p-3.5 ${boxStyle} rounded-xl border flex flex-col items-center justify-center transition-colors">
+                      ${badgeHtml}
                       <span class="text-amber-300 font-bold text-lg mb-0.5">พี่${escapeHtml(co.nickname)}</span>
                       <span class="text-[11px] text-stone-300">${escapeHtml(co.firstName)} ${escapeHtml(co.lastName)}</span>
-                      <span class="text-[9px] text-stone-400">สาขา: ${escapeHtml(co.branch)}</span>
-                      <span class="text-[9px] text-stone-400/70 mb-1">รหัส: ${escapeHtml(co.studentId)}</span>
+                      <span class="text-[9px] text-stone-400/70">สาขา: ${escapeHtml(co.branch)}</span>
+                      <span class="text-[10px] text-stone-400 mb-1">รหัส: ${escapeHtml(co.studentId)}</span>
                       ${co.ig && co.ig !== '-' ? `
                         <div class="mt-1 w-full flex justify-center">
                           <div class="grid grid-cols-[16px_auto_16px] gap-1.5 items-center text-[11px] text-amber-400/90">
                             <div></div>
-                            <a href="https://www.instagram.com/${escapeHtml(String(co.ig).trim().replace('@', ''))}" target="_blank" class="text-center hover:text-amber-200 hover:underline transition-colors z-10">IG:${escapeHtml(String(co.ig).trim())}</a>
-                            <div></div> <!-- กล่องเปล่าเพื่อรักษาสมดุล Grid -->
+                            ${generateContactLink(co.ig)}
+                            <div></div>
                           </div>
                         </div>
                       ` : ''}
                     </div>
                   `;
                 }
-              }).join('')}
-            </div>
-          </div>
-        `;
-      }
       
       let pTechHtml = '';
       if (mentor.pTechs && mentor.pTechs.length > 0) {

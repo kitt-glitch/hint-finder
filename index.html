@@ -297,7 +297,7 @@
       });
     }
 
-    function renderMentorReveal(mentor) {
+        function renderMentorReveal(mentor) {
       const container = document.getElementById('mentorRevealContainer');
       container.innerHTML = '';
       if (countdownInterval) clearInterval(countdownInterval);
@@ -311,7 +311,7 @@
               <i data-lucide="users" class="w-4 h-4 inline mr-1 -mt-0.5"></i> สายโครหัส (co-mentors)
             </span>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-center">
-              ${mentor.coMentors.filter(co => co.nickname && co.nickname != 'ไม่ระบุ' && co.studentId !== '').map(co => {
+              ${mentor.coMentors.filter(co => co.nickname && co.nickname !== 'ไม่ระบุ' && co.studentId !== '').map(co => {
                 if (co.isLeft) {
                   return `
                     <div class="p-3.5 bg-stone-900/40 rounded-xl border border-stone-800 flex flex-col items-center justify-center transition-colors">
@@ -349,7 +349,13 @@
                     </div>
                   `;
                 }
-      
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // กล่อง P'Tech (แสดงเฉพาะกรณีพี่เทคไม่ได้เป็นสายโค)
       let pTechHtml = '';
       if (mentor.pTechs && mentor.pTechs.length > 0) {
         pTechHtml = `
@@ -415,8 +421,8 @@
                   <div class="mt-4 pt-3 border-t border-stone-800/60 w-full flex justify-center">
                     <div class="grid grid-cols-[20px_auto_20px] gap-1.5 items-center text-sm text-amber-400 tracking-wide">
                       <div></div>
-                      <a href="https://www.instagram.com/${escapeHtml(String(mentor.ig).trim().replace('@', ''))}" target="_blank" class="text-center hover:text-amber-200 hover:underline transition-colors z-10">IG:${escapeHtml(String(mentor.ig).trim())}</a>
-                      <div></div> <!-- กล่องเปล่าเพื่อรักษาสมดุล Grid -->
+                      ${generateContactLink(mentor.ig)}
+                      <div></div>
                     </div>
                   </div>
                 ` : ''}

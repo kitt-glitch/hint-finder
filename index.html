@@ -224,8 +224,15 @@
 
       const statusTextEl = document.getElementById('caseStatusText');
       const specialNoticeEl = document.getElementById('specialCaseNotice');
+      const specialCareNoticeEl = document.getElementById('specialCareNotice');
+      
+      // เช็กว่าพี่รหัสคือรหัสที่ลงท้ายด้วย 126 หรือไม่
+      const isCareCase = res.mentor && res.mentor.studentId && res.mentor.studentId.endsWith('126');
       
       if (res.mentor.isRevealed) {
+        // ซ่อนกล่องแจ้งเตือนทั้งหมดเมื่อเฉลยแล้ว
+        if (specialCareNoticeEl) specialCareNoticeEl.classList.add('hidden');
+        
         if (res.mentor.isLeft) {
           statusTextEl.innerHTML = `<i data-lucide="file-x" class="w-4 h-4 text-stone-400"></i> <span class="text-stone-300">สถานะ: ปิดแฟ้มคดี (Case Closed)</span>`;
           specialNoticeEl.classList.add('hidden'); 
@@ -235,10 +242,17 @@
         }
       } else {
         statusTextEl.innerHTML = `<i data-lucide="fingerprint" class="w-4 h-4"></i> สถานะ: กำลังสืบสวน`;
+        
         if (res.mentor.isLeft) {
           specialNoticeEl.classList.remove('hidden'); 
+          if (specialCareNoticeEl) specialCareNoticeEl.classList.add('hidden');
+        } else if (isCareCase) {
+          // ถ้าเป็นเคสพี่รหัส 126 ให้โชว์กล่อง Special Care
+          if (specialCareNoticeEl) specialCareNoticeEl.classList.remove('hidden');
+          specialNoticeEl.classList.add('hidden');
         } else {
           specialNoticeEl.classList.add('hidden');
+          if (specialCareNoticeEl) specialCareNoticeEl.classList.add('hidden');
         }
       }
 

@@ -70,7 +70,7 @@
 
     <div id="searchSection" class="sherlock-card rounded-2xl p-6 md:p-8 mb-8">
       <form id="searchForm" onsubmit="handleSearch(event)">
-        <label class="block text-sm text-amber-200/90 mb-2">กรอกรหัสนักศึกษาของคุณ (เช่น 6908029)</label>
+        <label class="block text-sm text-amber-200/90 mb-2">กรอกรหัสนักศึกษาของคุณ (เช่น 6908029 หรือ 050)</label>
         <div class="flex flex-col md:flex-row gap-3">
           <div class="relative flex-1">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -227,7 +227,7 @@
       const specialCareNoticeEl = document.getElementById('specialCareNotice');
       
       // เช็กว่าพี่รหัสคือรหัสที่ลงท้ายด้วย 126 หรือไม่
-      const isCareCase = res.mentor && res.mentor.studentId && res.mentor.studentId.endsWith('126');
+      const isCareCase = res.mentor && res.mentor.studentId && String(res.mentor.studentId).endsWith('126');
       
       if (res.mentor.isRevealed) {
         // ซ่อนกล่องแจ้งเตือนทั้งหมดเมื่อเฉลยแล้ว

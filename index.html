@@ -67,6 +67,11 @@
       <p class="font-sherlock-en tracking-widest text-xs uppercase text-amber-500/80 mb-1">999 SALAYA INVESTIGATION</p>
       <h1 class="text-3xl md:text-5xl font-bold text-amber-100 mb-3 drop-shadow-md">แฟ้มคดีคำใบ้ตามหาพี่รหัส</h1>
     </header>
+      <div class="text-center mb-8 -mt-4">
+      <button onclick="openRosterModal()" type="button" class="inline-flex items-center gap-2 px-5 py-2.5 bg-stone-900/80 border border-amber-600/40 rounded-full text-amber-400 hover:bg-stone-800 hover:border-amber-500 transition-all text-sm font-medium shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+        <i data-lucide="book-image" class="w-4 h-4"></i> ส่องทำเนียบพี่รหัส
+      </button>
+    </div>
 
     <div id="searchSection" class="sherlock-card rounded-2xl p-6 md:p-8 mb-8">
       <form id="searchForm" onsubmit="handleSearch(event)">
@@ -496,19 +501,92 @@
       let str = String(contactStr).trim();
       let lowerStr = str.toLowerCase();
       
-      // ดักจับว่ามีคำว่า line หรือไม่
       if (lowerStr.includes('line')) {
-        // ลบคำว่า line, id และเครื่องหมายต่างๆ ออก ให้เหลือแค่ไอดีจริงๆ
         let cleanId = str.replace(/line\s*id\s*[:\-]?\s*/i, '').replace(/line\s*[:\-]?\s*/i, '').trim();
-        // เปลี่ยนจากแท็ก <a> เป็น <span> ธรรมดา เพื่อไม่ให้กดเป็นลิงก์ได้
         return `<span class="text-center text-emerald-400 font-medium z-10">LINE: ${escapeHtml(cleanId)}</span>`;
       } else {
-        // ถ้าไม่มีคำว่า line ให้ถือว่าเป็น IG และทำเป็นลิงก์กดได้เหมือนเดิม
         let cleanId = str.replace(/ig\s*[:\-]?\s*/i, '').replace('@', '').trim();
         let url = 'https://www.instagram.com/' + cleanId;
         return `<a href="${url}" target="_blank" class="text-center hover:text-amber-200 hover:underline transition-colors z-10 font-medium">IG: ${escapeHtml(cleanId)}</a>`;
       }
     }
+
+    let rosterLoaded = false;
+    function openRosterModal() {
+      document.getElementById('rosterModal').classList.remove('hidden');
+      if (!rosterLoaded) {
+        fetchRoster();
+      }
+    }
+    function closeRosterModal() {
+      document.getElementById('rosterModal').classList.add('hidden');
+    }
+    function fetchRoster() {
+      const loadingEl = document.getElementById('rosterLoading');
+      const containerEl = document.getElementById('rosterContainer');
+      
+      loadingEl.classList.remove('hidden');
+      containerEl.innerHTML = '';
+      
+      fetch(API_URL + '?action=roster')
+        .then(res => res.json())
+        .then(data => {
+          loadingEl.classList.add('hidden');
+          if (data.success && data.roster) {
+            rosterLoaded = true;            
+
+            data.roster.sort((a, b) => a.nickname.localeCompare(b.nickname, 'th'));
+            
+            data.roster.forEach(mentor => {
+              containerEl.innerHTML += `
+                <div class="p-3 bg-stone-900/90 border border-stone-800 rounded-xl text-center shadow-sm hover:border-amber-600/50 transition-colors">
+                  <div class="text-amber-400 font-bold mb-1 text-base">พี่${escapeHtml(mentor.nickname)}</div>
+                  ${mentor.ig && mentor.ig !== '-' ? `
+                    <div class="mt-2 w-full flex justify-center">
+                      <div class="grid grid-cols-[12px_auto_12px] gap-1.5 items-center text-[10px] text-amber-200/80">
+                        <div></div>
+                        ${generateContactLink(mentor.ig)}
+                        <div></div>
+                      </div>
+                    </div>
+                  ` : '
+                    <div class="text-[10px] text-stone-500 mt-2">ไม่มีข้อมูลติดต่อ</div>'}
+                </div>
+              `;
+            });
+          }
+        })
+        .catch(err => {
+          loadingEl.classList.add('hidden');
+          containerEl.innerHTML = `<div class="col-span-full text-red-500 text-sm text-center">ดึงข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง</div>`;
+        });
+    }
+
   </script>
+
+  <div id="rosterModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-sm transition-opacity">
+    <div class="bg-stone-900 border border-amber-700/50 rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col shadow-2xl gold-glow overflow-hidden">
+      
+      <div class="p-4 border-b border-stone-800 flex justify-between items-center bg-stone-950/50">
+        <h3 class="text-lg font-bold text-amber-300 flex items-center gap-2">
+          <i data-lucide="instagram" class="w-5 h-5 text-amber-500"></i> ข้อมูลรุ่นพี่
+        </h3>
+        <button onclick="closeRosterModal()" class="text-stone-400 hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-stone-800">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <div class="p-5 overflow-y-auto flex-1 parchment-bg">
+        <div id="rosterLoading" class="text-center py-8 hidden">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-amber-600 border-t-transparent mb-2"></div>
+          <p class="text-amber-700/80 text-sm font-semibold">กำลังดึงข้อมูล...</p>
+        </div>
+        
+        <div id="rosterContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </body>
 </html>

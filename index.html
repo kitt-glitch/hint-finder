@@ -511,16 +511,20 @@
       }
     }
 
+     // ระบบ Pop-up ทำเนียบ
     let rosterLoaded = false;
+
     function openRosterModal() {
       document.getElementById('rosterModal').classList.remove('hidden');
       if (!rosterLoaded) {
         fetchRoster();
       }
     }
+
     function closeRosterModal() {
       document.getElementById('rosterModal').classList.add('hidden');
     }
+
     function fetchRoster() {
       const loadingEl = document.getElementById('rosterLoading');
       const containerEl = document.getElementById('rosterContainer');
@@ -528,13 +532,15 @@
       loadingEl.classList.remove('hidden');
       containerEl.innerHTML = '';
       
+      // ดึงข้อมูลผ่าน API โดยระบุ action=roster
       fetch(API_URL + '?action=roster')
         .then(res => res.json())
         .then(data => {
           loadingEl.classList.add('hidden');
           if (data.success && data.roster) {
-            rosterLoaded = true;            
-
+            rosterLoaded = true; // โหลดครั้งเดียวพอ ไม่ต้องโหลดซ้ำ
+            
+            // เรียงชื่อเล่นตามตัวอักษรนิดหน่อยให้หาง่าย
             data.roster.sort((a, b) => a.nickname.localeCompare(b.nickname, 'th'));
             
             data.roster.forEach(mentor => {
@@ -549,8 +555,7 @@
                         <div></div>
                       </div>
                     </div>
-                  ` : '
-                    <div class="text-[10px] text-stone-500 mt-2">ไม่มีข้อมูลติดต่อ</div>'}
+                  ` : '<div class="text-[10px] text-stone-500 mt-2">ไม่มีข้อมูลติดต่อ</div>'}
                 </div>
               `;
             });
@@ -558,7 +563,7 @@
         })
         .catch(err => {
           loadingEl.classList.add('hidden');
-          containerEl.innerHTML = `<div class="col-span-full text-red-500 text-sm text-center">ดึงข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง</div>`;
+          containerEl.innerHTML = `<div class="col-span-full text-red-500 text-sm text-center">ดึงข้อมูลไม่สำเร็จ ลองใหม่อีกครั้งครับ</div>`;
         });
     }
 
